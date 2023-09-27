@@ -1,0 +1,106 @@
+-- DROP TABLE IF EXISTS public."Users";
+
+Table Users: 
+
+CREATE TYPE gen AS ENUM ('f', 'm');
+CREATE EXTENSION chkpass;
+CREATE EXTENSION CITEXT;
+
+CREATE TABLE public."Users" (
+ 
+Id SERIAL PRIMARY KEY,
+Email CITEXT NOT NULL UNIQUE,
+Password chkpass NOT NULL,
+CardID INT, 
+Tier INT,
+RegistrationDate DATE NOT NULL DEFAULT CURRENT_DATE, 
+Name VARCHAR(50) NOT NULL,
+Surname VARCHAR(50) NOT NULL,
+Sex gen,
+DOB DATE, 
+Nationality VARCHAR(50),
+HomeCountryAddress json, 
+PeriodOfStay VARCHAR(50),
+PhoneNumber BIGINT, 
+PadovaAddress json, 
+DocumentType VARCHAR(50),
+DocumentNumber VARCHAR(50),
+DocumentFile VARCHAR(50),
+DietType text ARRAY,
+Allergies text ARRAY, 
+EmailHash text,
+EmailConfirmed Boolean DEFAULT FALSE
+);
+
+
+--     CHECK(
+--         person_email ~ '^[\w]+\@\w{0,6}\.\w{2,4}$'
+--     )
+
+
+Table Events:
+
+CREATE TABLE public."Events" (
+
+id SERIAL PRIMARY KEY,
+name text NOT NULL,
+description text ARRAY NOT NULL,
+price INT NOT NULL,
+visibility Boolean DEFAULT FALSE, 
+location text,
+maxParticipantsInternational INT NOT NULL,
+maxParticipantsVolunteer INT NOT NULL,
+eventStart timestamp without time zone, 
+eventEnd timestamp without time zone, 
+subscriptionStart timestamp without time zone, 
+subscriptionEnd timestamp without time zone, 
+withdrawalEnd timestamp without time zone, 
+maxWaitingList INT,
+attributes text ARRAY,
+thumbnail text ARRAY,
+poster text
+
+);
+
+
+Table Payments:
+
+CREATE TABLE public."Payments" (
+
+id SERIAL PRIMARY KEY,
+user_id INT,
+event_id INT,
+method text NOT NULL,
+amount INT NOT NULL,
+date DATE NOT NULL DEFAULT CURRENT_DATE,
+notes text ARRAY,
+
+CONSTRAINT fk_user 
+	  FOREIGN KEY(user_id) 
+	  REFERENCES public."Users"(id)
+	  ON DELETE SET NULL, 
+
+CONSTRAINT fk_Event
+      FOREIGN KEY(event_id) 
+	  REFERENCES public."Events"(id)
+	  ON DELETE SET NULL
+
+);
+
+Table Causes:
+
+CREATE TABLE public."Causes" (
+
+id SERIAL PRIMARY KEY,
+name text ARRAY NOT NULL
+
+);
+
+Table Tags:
+
+CREATE TABLE public."Tags" (
+
+name text
+
+);
+
